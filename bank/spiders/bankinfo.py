@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from bank.items import BankItem
+import re
 
 class BankinfoSpider(scrapy.Spider):
     name = 'bankinfo'
     allowed_domains = ['lianhanghao.com']
-    start_urls = ['http://lianhanghao.com/index.php/Index/index/p/11596.html']
+    start_urls = ['http://lianhanghao.com/index.php/Index/index/p/1.html']
 
     def parse(self, response):
         trs = response.xpath("/html/body/div[3]/div[3]/table/tbody/tr")
@@ -13,7 +14,7 @@ class BankinfoSpider(scrapy.Spider):
             item = BankItem()
             item["bank_number"] = tr.xpath("./td[1]/text()").extract_first()
             item["bank_name"] = tr.xpath("./td[2]/text()").extract_first()
-            item["bank_telephone"] = tr.xpath("./td[3]/text()").extract_first()
+            item["bank_telephone"] = re.sub("\s+|\|","",tr.xpath("./td[3]/text()").extract_first())
             item["bank_address"] = tr.xpath("./td[4]/text()").extract_first()
             yield (item)
 
